@@ -19,6 +19,7 @@ public:
 
 protected:
     void timerEvent(QTimerEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     QOpenGLShaderProgram    m_prog_quads;
@@ -27,6 +28,10 @@ private:
     GLuint                  m_vao_quads_id;
     GLint                   m_transform_uni_id;
     GLint                   m_triangle_color_id;
+    QVector3D camera_pos;
+    QVector3D camera_up;
+    QVector3D camera_front;
+
 };
 
 #endif // WIDGET_H

@@ -48,6 +48,8 @@ static const char *fragmentShaderSource_triangle =
 
 GLWidget::GLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
+    , camera_up(0.0f, 1.0f, 0.0f)
+    , camera_front(0.0f, 0.0f, -1.0f)
 {
 }
 
@@ -58,6 +60,19 @@ GLWidget::~GLWidget()
 void GLWidget::timerEvent(QTimerEvent *event)
 {
     update();
+}
+
+void GLWidget::keyPressEvent(QKeyEvent *event)
+{
+    float cameraSpeed = 0.30f; // adjust accordingly
+    if (event->key() == Qt::Key_W)
+        camera_pos += cameraSpeed * camera_front;
+    if (event->key() == Qt::Key_S)
+        camera_pos -= cameraSpeed * camera_front;
+    if (event->key() == Qt::Key_A)
+        camera_pos -= QVector3D::crossProduct(camera_front, camera_up).normalized() * cameraSpeed;
+    if (event->key() == Qt::Key_D)
+        camera_pos += QVector3D::crossProduct(camera_front, camera_up).normalized() * cameraSpeed;
 }
 
 void GLWidget::initializeGL()
@@ -240,7 +255,9 @@ void GLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT);
 
     QMatrix4x4 trans;
+    QMatrix4x4 view;
     trans.rotate(angle, QVector3D(0.5f, 0.5f, 1.0f));
+    view.lookAt(camera_pos, camera_pos + camera_front, camera_up);
 
     glBindVertexArray(m_vao_quads_id);
     m_prog_quads.bind();
@@ -250,6 +267,7 @@ void GLWidget::paintGL()
 
     glBindVertexArray(m_vao_triangle_id);
     m_prog_triangle.bind();
+    trans.translate(QVector3D( 0.7f,  0.7f, 0.7f));
     m_prog_triangle.setUniformValue("transform", trans);
     glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 }
