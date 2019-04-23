@@ -24,8 +24,10 @@ protected:
 private:
     QOpenGLShaderProgram    m_prog_quads;
     QOpenGLShaderProgram    m_prog_triangle;
+    QOpenGLShaderProgram    m_prog_star;
     GLuint                  m_vao_triangle_id;
     GLuint                  m_vao_quads_id;
+    GLuint                  m_vao_star_id;
     GLint                   m_transform_uni_id;
     GLint                   m_triangle_color_id;
     QVector3D camera_pos;
