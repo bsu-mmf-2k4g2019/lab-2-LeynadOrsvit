@@ -21,9 +21,12 @@ protected:
     void timerEvent(QTimerEvent *event) override;
 
 private:
+    QOpenGLShaderProgram    m_prog_quads;
     QOpenGLShaderProgram    m_prog_triangle;
     GLuint                  m_vao_triangle_id;
+    GLuint                  m_vao_quads_id;
     GLint                   m_transform_uni_id;
+    GLint                   m_triangle_color_id;
 };
 
 #endif // WIDGET_H
