@@ -10,9 +10,11 @@ static const char *vertexShaderSource_quads =
     "layout (location = 1) in vec3 aCol;\n"
     "out vec3 color;\n"
     "uniform mat4 transform;\n"
+    "uniform mat4 view;\n"
+    "uniform mat4 projection;\n"
     "void main()\n"
     "{\n"
-    "    gl_Position = transform * vec4(aPos, 1.0);\n"
+    "    gl_Position = projection * view * transform * vec4(aPos, 1.0);\n"
     "    color = aCol;\n"
     "}\n\0";
 
@@ -31,9 +33,11 @@ static const char *vertexShaderSource_triangle =
     "layout (location = 1) in vec3 aCol;\n"
     "out vec3 color;\n"
     "uniform mat4 transform;\n"
+    "uniform mat4 view;\n"
+    "uniform mat4 projection;\n"
     "void main()\n"
     "{\n"
-    "    gl_Position = transform * vec4(aPos, 1.0);\n"
+    "    gl_Position = projection * view * transform * vec4(aPos, 1.0);\n"
     "    color = aCol;\n"
     "}\n\0";
 
@@ -52,9 +56,11 @@ static const char *vertexShaderSource_star =
     "layout (location = 1) in vec3 aCol;\n"
     "out vec3 color;\n"
     "uniform mat4 transform;\n"
+    "uniform mat4 view;\n"
+    "uniform mat4 projection;\n"
     "void main()\n"
     "{\n"
-    "    gl_Position = transform * vec4(aPos, 1.0);\n"
+    "    gl_Position = projection * view * transform * vec4(aPos, 1.0);\n"
     "    color = aCol;\n"
     "}\n\0";
 
@@ -69,8 +75,8 @@ static const char *fragmentShaderSource_star =
 
 GLWidget::GLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
-    , camera_up(0.0f, 1.0f, 0.0f)
-    , camera_front(0.0f, 0.0f, -1.0f)
+    , camera_up(0.0f, 1.0f, -1.0f)
+    , camera_front(0.0f, 0.0f, 1.0f)
 {
 }
 
@@ -184,68 +190,68 @@ void GLWidget::initializeGL()
     };
 
     GLfloat vertices_star[] = {
-        -0.5f, 0.0f,0.0f,  1.0f, 0.5f, 0.0f,
+        -0.5f, 0.0f,0.0f,  0.0f, 0.5f, 1.0f,
         -0.15f, 0.15f,0.0f,  0.0f, 0.5f, 0.5f,
         0.0f, 0.0f, 0.2f,  0.0f, 1.0f, 0.5f,
 
         -0.15f, 0.15f,0.0f,  0.0f, 0.5f, 0.5f,
-        0.0f, 0.5f, 0.0f,  1.0f, 0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f,  0.0f, 0.5f, 1.0f,
         0.0f, 0.0f,0.2f,  0.0f, 1.0f, 0.5f,
 
-        -0.5f, 0.0f,0.0f,  1.0f, 0.5f, 0.0f,
+        -0.5f, 0.0f,0.0f,  0.0f, 0.5f, 1.0f,
         -0.15f, 0.15f,0.0f,  0.0f, 0.5f, 0.5f,
         0.0f, 0.0f,-0.2f,  0.0f, 1.0f, 0.5f,
 
         -0.15f, 0.15f,0.0f,  0.0f, 0.5f, 0.5f,
-        0.0f, 0.5f, 0.0f,  1.0f, 0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f,  0.0f, 0.5f, 1.0f,
         0.0f, 0.0f,-0.2f,  0.0f, 1.0f, 0.5f,
 
-        0.0f, 0.5f, 0.0f,  1.0f, 0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f,  0.0f, 0.5f, 1.0f,
         0.15f, 0.15f,0.0f,  0.0f, 0.5f, 0.5f,
         0.0f, 0.0f,0.2f,  0.0f, 1.0f, 0.5f,
 
         0.15f, 0.15f,0.0f,  0.0f, 0.5f, 0.5f,
-        0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 0.0f,
+        0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 1.0f,
         0.0f, 0.0f,0.2f,  0.0f, 1.0f, 0.5f,
 
-        0.0f, 0.5f, 0.0f,  1.0f, 0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f,  0.0f, 0.5f, 1.0f,
         0.15f, 0.15f,0.0f,  0.0f, 0.5f, 0.5f,
         0.0f, 0.0f,-0.2f,  0.0f, 1.0f, 0.5f,
 
         0.15f, 0.15f,0.0f,  0.0f, 0.5f, 0.5f,
-        0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 0.0f,
+        0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 1.0f,
         0.0f, 0.0f,-0.2f,  0.0f, 1.0f, 0.5f,
 
-        0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 0.0f,
+        0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 1.0f,
         0.15f, -0.15f,0.0f,  0.0f, 0.5f, 0.5f,
         0.0f, 0.0f,0.2f,  0.0f, 1.0f, 0.5f,
 
         0.15f, -0.15f,0.0f,  0.0f, 0.5f, 0.5f,
-        0.0f, -0.5f, 0.0f,  1.0f, 0.5f, 0.0f,
+        0.0f, -0.5f, 0.0f,  0.0f, 0.5f, 1.0f,
         0.0f, 0.0f,0.2f,  0.0f, 1.0f, 0.5f,
 
-        0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 0.0f,
+        0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 1.0f,
         0.15f, -0.15f,0.0f,  0.0f, 0.5f, 0.5f,
         0.0f, 0.0f,0.2f,  0.0f, 1.0f, 0.5f,
 
         0.15f, -0.15f,0.0f,  0.0f, 0.5f, 0.5f,
-        0.0f, -0.5f, 0.0f,  1.0f, 0.5f, 0.0f,
+        0.0f, -0.5f, 0.0f,  0.0f, 0.5f, 1.0f,
         0.0f, 0.0f,0.2f,  0.0f, 1.0f, 0.5f,
 
-        0.0f, -0.5f, 0.0f,  1.0f, 0.5f, 0.0f,
+        0.0f, -0.5f, 0.0f,  0.0f, 0.5f, 1.0f,
         -0.15f, -0.15f,0.0f,  0.0f, 0.5f, 0.5f,
         0.0f, 0.0f,0.2f,  0.0f, 1.0f, 0.5f,
 
         -0.15f, -0.15f,0.0f,  0.0f, 0.5f, 0.5f,
-        -0.5f, 0.0f, 0.0f,  1.0f, 0.5f, 0.0f,
+        -0.5f, 0.0f, 0.0f,  0.0f, 0.5f, 1.0f,
         0.0f, 0.0f,0.2f,  0.0f, 1.0f, 0.5f,
 
-        0.0f, -0.5f, 0.0f,  1.0f, 0.5f, 0.0f,
+        0.0f, -0.5f, 0.0f,  0.0f, 0.5f, 1.0f,
         -0.15f, -0.15f,0.0f,  0.0f, 0.5f, 0.5f,
         0.0f, 0.0f,-0.2f,  0.0f, 1.0f, 0.5f,
 
         -0.15f, -0.15f,0.0f,  0.0f, 0.5f, 0.5f,
-        -0.5f, 0.0f, 0.0f,  1.0f, 0.5f, 0.0f,
+        -0.5f, 0.0f, 0.0f,  0.0f, 0.5f, 1.0f,
         0.0f, 0.0f,-0.2f,  0.0f, 1.0f, 0.5f,
     };
 
@@ -378,14 +384,18 @@ void GLWidget::paintGL()
     double angle = (cur_t.second() * 1000 + cur_t.msec()) * 360.0 * 15 / 60000.0;
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT  | GL_DEPTH_BUFFER_BIT);
 
     QMatrix4x4 trans;
     QMatrix4x4 view;
+    QMatrix4x4 projection;
     trans.rotate(angle, QVector3D(0.1f, 0.3f, 0.5f));
+    projection.perspective(45.0f, width() / height(), 0.1f, 100.0f);
     view.lookAt(camera_pos, camera_pos + camera_front, camera_up);
 
     glBindVertexArray(m_vao_quads_id);
+    m_prog_quads.setUniformValue("view", view);
+    m_prog_quads.setUniformValue("projection", projection);
     m_prog_quads.bind();
     trans.translate(QVector3D( 0.7f,  0.0f, 0.0f));
     m_prog_quads.setUniformValue("transform", trans);
@@ -393,12 +403,16 @@ void GLWidget::paintGL()
 
 
     glBindVertexArray(m_vao_triangle_id);
+    m_prog_triangle.setUniformValue("view", view);
+    m_prog_triangle.setUniformValue("projection", projection);
     m_prog_triangle.bind();
     trans.translate(QVector3D( 0.0f,  0.7f, 0.0f));
     m_prog_triangle.setUniformValue("transform", trans);
     glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
     glBindVertexArray(m_vao_star_id);
+    m_prog_star.setUniformValue("view", view);
+    m_prog_star.setUniformValue("projection", projection);
     m_prog_star.bind();
     trans.translate(QVector3D( 0.0f,  0.0f, 0.7f));
     m_prog_star.setUniformValue("transform", trans);
